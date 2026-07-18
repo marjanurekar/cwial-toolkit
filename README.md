@@ -10,6 +10,9 @@ Information Metrology Framework (CWIMF) described in:
 No external dependencies. Pure Python 3.8+, SQLite (stdlib), CSV (stdlib).
 Tested and confirmed working -- see "Verification" below.
 
+markdown
+Laboratory site: https://marjanurekar.github.io/cwial-website/
+
 ## Quick start
 
 ```bash
