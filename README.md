@@ -4,10 +4,8 @@ A minimal, ISO/IEC 17025-aligned toolkit for running a small Cognitive Warfare
 Information Analysis Laboratory (CWIAL), implementing the Cognitive Warfare
 Information Metrology Framework (CWIMF) described in:
 
-- **Paper 1** (IcETRAN 2026): *Ten Metrological Principles for Understanding and
-  Countering Cognitive Warfare*
-- **Paper 3** (Measurement, Elsevier, submitted): *CWIMF -- A Formal Measurement
-  Architecture Based on VIM, GUM, and ISO/IEC 17025*
+- **Paper 1**: *Ten Metrological Principles for Understanding and Countering Cognitive Warfare*
+- **Paper 3**: *CWIMF -- A Formal Measurement Architecture Based on VIM, GUM, and ISO/IEC 17025*
 
 No external dependencies. Pure Python 3.8+, SQLite (stdlib), CSV (stdlib).
 Tested and confirmed working -- see "Verification" below.
