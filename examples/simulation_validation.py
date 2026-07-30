@@ -1,6 +1,6 @@
 """
 Runs both Monte Carlo applications of the CWIAL simulation module and
-verifies the results against the Paper 3B published values.
+verifies the results against the Paper 3 published values.
 
 Usage:  python examples/simulation_validation.py     (runtime ~1-2 min)
 
@@ -8,7 +8,7 @@ Expected verification outcomes:
   1. Known-truth recovery coverage at k=2 in [0.93, 1.00]  (nominal 0.95)
   2. Empirical error sd within ~15% of the budget u_c = 0.076
   3. False-detection rate at true BDI = 0 below ~0.05
-  4. Empirical MDD consistent with the Currie approximation ~0.25
+  4. Empirical MDD (instrument capability) consistent with Currie ~0.25
 """
 import sys, time
 from pathlib import Path
@@ -19,7 +19,7 @@ from cwial.simulate import validate_recovery, power_curve
 def main():
     t0 = time.time()
     print("=" * 64)
-    print("APPLICATION 1 -- Synthetic attack scenario, known-truth recovery")
+    print("APPLICATION 1 -- Synthetic recovery (estimator + propagation only)")
     print("=" * 64)
     coverage, err_sd = validate_recovery(true_bdi_target=0.42,
                                           trials=500, seed=42)

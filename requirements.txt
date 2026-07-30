@@ -1,0 +1,2 @@
+# No external dependencies required -- pure Python 3.8+ standard library
+# (sqlite3, csv, datetime, math, dataclasses, pathlib all built in)

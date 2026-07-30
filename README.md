@@ -4,14 +4,41 @@ A minimal, ISO/IEC 17025-aligned toolkit for running a small Cognitive Warfare
 Information Analysis Laboratory (CWIAL), implementing the Cognitive Warfare
 Information Metrology Framework (CWIMF) described in:
 
-- **Paper 1**: *Ten Metrological Principles for Understanding and Countering Cognitive Warfare*
-- **Paper 3**: *CWIMF -- A Formal Measurement Architecture Based on VIM, GUM, and ISO/IEC 17025*
+- **Paper 1** (IcETRAN 2026): *Ten Metrological Principles for Understanding and
+  Countering Cognitive Warfare*
+- **Paper 2** (measurement architecture): *A Formal Measurement Architecture
+  for CWIMF, Based on VIM, GUM, and ISO/IEC 17025*
+- **Paper 3** (Measurement, Elsevier, under review): the CWIAL laboratory
+  measurement paper, in which the detection quantities, the difference
+  operators, and the verdict vocabulary used by this toolkit are defined
 
 No external dependencies. Pure Python 3.8+, SQLite (stdlib), CSV (stdlib).
-Tested and confirmed working -- see "Verification" below.
+See "Verification" below for what the example scripts do and do not establish.
 
-markdown
-Laboratory site: https://marjanurekar.github.io/cwial-website/
+### Changes in 0.2.0 (alignment with revised Papers 2 and 3)
+
+The measurement vocabulary was corrected to match the revised papers:
+
+- A single measurement now reports one verdict, `distinguishable_from_zero`
+  (`|BDI| > U`). The former `passes_response_threshold` flag and the
+  "RESPONSE JUSTIFIED" / "WITHIN NOISE FLOOR" strings, which conflated
+  distinguishability with true-value estimation and with the decision to
+  act, were removed.
+- The detection quantities (critical value, MDD, and the new response
+  threshold 3.645*u_c) are reported as instrument-capability statements
+  evaluated at the null, with an explicit note that for a verified-false
+  proposition the null is not physically realisable, so substantive claims
+  rest on differences.
+- `detection_threshold()` is renamed `critical_value()` (the old name is
+  kept as an alias) to match Currie 1968 / ISO 11843-1.
+- `compute_cav()` can now propagate endpoint uncertainty through a declared
+  cross-wave correlation rather than assuming independence or exact
+  cancellation.
+- The synthetic recovery study is described as validating the estimator and
+  propagation only, not the reference or the design effect. References to a
+  "digital calibration standard" and to the VFRB as a "certified reference
+  material" were softened to "synthetic reference" and "reference standard
+  analogous to a CRM".
 
 ## Quick start
 
@@ -22,9 +49,10 @@ python examples/simulation_validation.py
 ```
 
 This reproduces the Paper 3 worked example end-to-end and confirms your
-installation is correct: **BDI = +0.420 +/- 0.149 (k=2, 95% confidence)**,
-matching the published paper exactly. A full ISO/IEC 17025-style report
-is written to `reports/`.
+installation is correct: **BDI = +0.420 +/- 0.153 (k=2, ~95% coverage)**,
+u_c = 0.076. A full ISO/IEC 17025-style report is written to `reports/`.
+(The interval is a coverage interval, not a confidence interval in the
+frequentist sense; the distinction is kept throughout.)
 
 ## What's in the box
 
@@ -40,17 +68,25 @@ is written to `reports/`.
 
 ## Verification
 
-This toolkit was tested end-to-end before packaging:
-- The Brexit worked example reproduces Paper 3B's published BDI, u_c, U, and
-  MDD values to within rounding tolerance.
-- VFRB expiry checking, instrument overdue-calibration checking, CAV
-  computation, and the NCS stub were all independently tested.
-- All modules import and run cleanly with zero external dependencies.
+The three example scripts run end-to-end with zero external dependencies:
+- `brexit_350m_example.py` reproduces the Paper 3 worked example's BDI, u_c,
+  U, and MDD to within rounding tolerance.
+- `simulation_validation.py` confirms recovery coverage, the null-case
+  false-detection rate, and the empirical detection capability.
+- `ncs_instrument_validation.py` recovers injected variance components and
+  biases on synthetic instrument data.
+What these establish is internal consistency -- that the estimators and the
+propagation are correct. They do not validate the reference base or the
+design-effect assumption; those require the external work described in
+Paper 3, Section 8.
 
 ## Data provenance note
 
-`examples/brexit_350m_example.py` reproduces Paper 3B Section 6 exactly:
-BDI = +0.42 +/- 0.153 (k=2), u_c = 0.076, MDD = 0.251, |BDI|/U = 2.75.
+`examples/brexit_350m_example.py` reproduces Paper 3 Section 6:
+BDI = +0.42 +/- 0.153 (k=2), u_c = 0.076, MDD (capability) = 0.251,
+|BDI|/U = 2.75. The last ratio says the reading is distinguishable from
+zero by 2.75 expanded uncertainties; it is a scale, not a verdict that a
+response is warranted.
 
 Two points matter for anyone adapting it:
 
@@ -64,21 +100,33 @@ Two points matter for anyone adapting it:
    propagate: the claim is false whether the figure is 180 or 200. Only the
    probability that the truth-value assignment is itself wrong propagates.
 
-Detection capability follows Currie (1968) / ISO 11843-1: the detection
-threshold is 1.645*u_c and the minimum detectable displacement 3.29*u_c.
-The earlier `3*u_c` "limit of detection" has been removed.
+Detection capability follows Currie (1968) / ISO 11843-1: the critical value
+is 1.645*u_c and the minimum detectable displacement 3.29*u_c, with the
+response threshold (95% power under |BDI| > 2u_c) at 3.645*u_c. These are
+properties of the procedure at the null and characterise what the instrument
+can resolve; they are not thresholds an individual output "passes". For a
+verified-false proposition the null is not physically realisable, so they are
+reported for scale and substantive claims rest on differences. A single
+measurement supports one verdict: whether |BDI| > U, i.e. whether the reading
+is distinguishable from zero. The toolkit's former `passes_response_threshold`
+flag and its "RESPONSE JUSTIFIED" / "WITHIN NOISE FLOOR" strings conflated
+distinguishability, true-value estimation, and the decision to act, and have
+been replaced accordingly.
 
 ## Monte Carlo simulation module
 
 `cwial/simulate.py` implements the two core MCM applications (Phase 1 of
 the CWIMF validation roadmap):
 
-1. **Synthetic attack scenarios** -- an agent population with a known true
-   BDI trajectory acts as a *digital calibration standard*. Run
-   `validate_recovery()` to confirm the full pipeline (sampling + bias
-   sources + uncertainty budget) recovers the known truth at the claimed
-   k=2 coverage. Verified output: coverage 0.948 over 500 trials,
-   empirical error sd 0.076 = declared u_c.
+1. **Synthetic recovery** -- an agent population with a known true BDI
+   trajectory acts as a *synthetic reference* (analogous to, not identical
+   with, a certified reference material: it is constructed, not produced
+   under ISO 17034). Run `validate_recovery()` to confirm the pipeline
+   recovers the constructed truth at the claimed k=2 coverage. This checks
+   the estimator and the propagation only: a population built to a chosen
+   design effect returns that design effect, which is internal consistency,
+   not evidence about any real survey (Paper 3, Section 8.4). Typical output:
+   coverage ~0.95 over 500 trials, empirical error sd ~ declared u_c.
 2. **Detection power curves** -- `power_curve()` maps P(detect) against
    true displacement, yielding the instrument's empirical minimum
    detectable displacement. Note: under the *response* criterion

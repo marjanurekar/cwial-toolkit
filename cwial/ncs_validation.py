@@ -8,7 +8,7 @@ as a MEASUREMENT INSTRUMENT and computes its metrological characterization:
      re-run: temperature/sampling non-determinism) and reproducibility
      (across prompt reformulations and model versions).
   2. TRUENESS   -- systematic bias by claim class (the delta that becomes
-     u_B2 in the CWIMF BDI budget of Paper 3B).
+     u_B2 in the CWIMF BDI budget of Paper 3, Section 4.1).
   3. CALIBRATION -- linear calibration function mapping raw instrument score
      to VFRB-referenced true consistency, with residual uncertainty.
   4. NCS UNCERTAINTY BUDGET and propagation into u_B2(BDI).
@@ -110,7 +110,7 @@ def ncs_uncertainty(u_repeat, u_reprod, u_calib):
 def propagate_to_bdi_uB2(u_ncs, residual_bias, sensitivity=1.0):
     """
     When BDI is estimated via LLM-scored content analysis (the calibrated
-    proxy of Paper 3B Sec. 4.1), the instrument's combined uncertainty and
+    proxy of Paper 3, Section 4.1), the instrument's combined uncertainty and
     any residual uncorrected bias map onto the BDI scale as the u_B2 term.
     With a linear proxy the sensitivity coefficient is ~1.
     """

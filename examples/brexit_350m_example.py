@@ -1,5 +1,5 @@
 """
-Reproduces the worked example from Paper 3B, Section 6.
+Reproduces the worked example from Paper 3, Section 6.
 
 Run this first to check that your installation reproduces the published
 numbers:  BDI = +0.42 +/- 0.15 (k=2, ~95% coverage), MDD ~ 0.25.
@@ -50,7 +50,7 @@ def main():
               "proposition the +/-GBP10M numeric range does NOT propagate "
               "into the BDI budget -- the claim is false whether the net "
               "figure is 180 or 200. Only the risk that the truth-value "
-              "assignment itself is wrong propagates, as u_B1 (Paper 3B "
+              "assignment itself is wrong propagates, as u_B1 (Paper 3 "
               "Sec. 5.3)."
     )
     vfrb.add_source(PROP_ID, "UK Statistics Authority statement, 27 May 2016",
@@ -76,9 +76,9 @@ def main():
         notes="n>2,200 GB adults 18-75; claim-aware subsample n~%d." % N_AWARE
     )
 
-    # --- 3. Compute BDI with the Paper 3B GUM uncertainty budget ---
+    # --- 3. Compute BDI with the Paper 3 GUM uncertainty budget ---
     # Each component is a zero-expectation correction term in the additive
-    # measurement model of Paper 3B eq. 3, so all sensitivity coefficients
+    # measurement model of Paper 3 eq. 3, so all sensitivity coefficients
     # are unity and the combined uncertainty is an exact quadrature sum.
     type_b = {
         "u_B1_reference_classification": (
@@ -107,15 +107,23 @@ def main():
     print(result)
     print()
 
-    # --- Checks against the published Paper 3B result ---
+    # --- Checks against the published Paper 3 result ---
     assert abs(result.bdi - 0.42) < 0.001, "BDI mismatch vs published result"
     assert abs(result.u_c - 0.076) < 0.002, "u_c mismatch vs published result"
     assert abs(result.U - 0.153) < 0.004, "Expanded uncertainty mismatch"
-    assert abs(result.mdd - 0.25) < 0.01, "MDD mismatch vs published result"
-    print("[OK] Reproduced Paper 3B: BDI = +0.42 +/- 0.15 (k=2), "
-          "u_c = 0.076, MDD = 0.25")
-    print("[OK] |BDI|/U = %.2f -> displacement is %.1fx the response threshold"
-          % (abs(result.bdi)/result.U, abs(result.bdi)/result.U))
+    assert abs(result.mdd - 0.25) < 0.01, "MDD (capability) mismatch vs published result"
+    print("[OK] Reproduced Paper 3: BDI = +0.42 +/- 0.15 (k=2), "
+          "u_c = 0.076; instrument MDD (capability) = 0.25")
+    # |BDI| > U establishes distinguishability from zero, and nothing more.
+    # The ratio is a scale, not a verdict on actionability.
+    print("[OK] |BDI| = %.2f exceeds U = %.2f -> distinguishable from zero "
+          "(|BDI|/U = %.2f)."
+          % (abs(result.bdi), result.U, abs(result.bdi)/result.U))
+    print("     The observed |BDI| also lies above the instrument's response "
+          "threshold (%.3f), i.e. outside the range where the instrument's "
+          "capability would be in question; this is a statement of scale, not "
+          "proof that the true displacement exceeds that threshold." 
+          % result.response_threshold)
 
     # --- 4. ISO/IEC 17025 clause-7.8-style report ---
     vfrb_entry = vfrb.get_proposition(PROP_ID)
@@ -127,7 +135,7 @@ def main():
         method=("Brexit Misperceptions survey (Policy Institute at KCL / "
                 "Ipsos MORI / UK in a Changing Europe, Oct 2018); "
                 "claim-aware subsample n=%d; belief prevalence referenced to "
-                "aligned prevalence p0=0 per Paper 3B eq. 1; D_eff=%.1f "
+                "aligned prevalence p0=0 per Paper 3 eq. 1; D_eff=%.1f "
                 "declared, not measured." % (N_AWARE, D_EFF)),
         analyst="CWIAL No. 1 (starter kit demo)",
     )

@@ -3,21 +3,33 @@ CWIAL Monte Carlo simulation module.
 
 Implements the two highest-priority MCM applications for CWIMF research:
 
-  1. SYNTHETIC ATTACK SCENARIOS (Phase 1 validation, Paper 3 roadmap):
-     an agent population with a KNOWN true BDI trajectory serves as the
-     'digital calibration standard' -- the cognitive equivalent of a
-     certified reference material. The full measurement pipeline
-     (sampling + bias sources + uncertainty budget) is validated by
-     checking that it recovers the known truth within its stated
-     expanded uncertainty at the claimed coverage.
+  1. SYNTHETIC RECOVERY (Phase 1 validation, Paper 3 roadmap):
+     an agent population with a KNOWN true BDI trajectory serves as a
+     synthetic reference: a reference standard analogous to (not identical
+     with) a certified reference material, since it is constructed rather
+     than produced under ISO 17034. The measurement pipeline (sampling +
+     bias sources + uncertainty budget) is checked by confirming that it
+     recovers the constructed truth within its stated expanded uncertainty
+     at the claimed coverage.
+
+     Scope of what this validates (Paper 3, Section 8.4): recovery tests the
+     ESTIMATOR and the PROPAGATION -- that, given a correct truth value and a
+     well-specified population, the method returns the truth with
+     characterised uncertainty. It does NOT validate the reference itself,
+     nor the design effect: a population constructed with a chosen D_eff will
+     return that D_eff, which is internal consistency, not independent
+     evidence about any real survey. Recovery is necessary, not sufficient.
 
   2. DETECTION POWER CURVES (operating characteristic of the instrument):
      probability of detection P(|BDI_measured| > U) as a function of the
      true displacement, yielding the empirical minimum detectable
-     displacement (MDD) for direct comparison with the Currie
-     approximation MDD = 3.29 * u0 (Paper 3B, eq. 8).
+     displacement (MDD) for comparison with the Currie approximation
+     MDD = 3.29 * u0 (Paper 3, Section 5). The MDD is a statement of
+     instrument capability; for a verified-false proposition its null is not
+     physically realisable, so it is reported for scale, and substantive
+     claims rest on differences (see measurands.compute_cav).
 
-Pure Python 3.8+ standard library. Distributions match the Paper 3B
+Pure Python 3.8+ standard library. Distributions match the Paper 3
 budget exactly:
   Type A : survey sampling of n agents (naturally generated)
   d_ref  : Normal(0, 0.030)      reference classification risk
@@ -31,7 +43,7 @@ import random
 import statistics
 from .uncertainty import UncertaintyBudget
 
-# Paper 3B Type B budget (name -> (kind, parameter))
+# Paper 3 Type B budget (name -> (kind, parameter))
 DEFAULT_TYPE_B = {
     "u_B1_reference":   ("normal",     0.030),
     "u_B2_instrument":  ("normal",     0.050),
@@ -168,7 +180,7 @@ def power_curve(true_bdi_values=(0.0, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 
     """
     APPLICATION 2 -- detection power curve (operating characteristic).
     For each true displacement, the detection rule is |BDI| > U (the
-    Paper 3B response criterion). Returns list of (true_bdi, power).
+    Paper 3 response criterion). Returns list of (true_bdi, power).
     Also reports the empirical MDD: the smallest simulated displacement
     with power >= 0.95, for comparison with Currie 3.29*u0 ~ 0.25.
     """
@@ -193,7 +205,8 @@ def power_curve(true_bdi_values=(0.0, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 
             print(f"[Power] true BDI = {tb:.2f}  P(detect) = {power:.3f}  {bar}")
     mdd_emp = next((tb for tb, pw in results if pw >= 0.95 and tb > 0), None)
     if verbose:
-        print(f"[Power] empirical MDD (power >= 0.95): "
+        print(f"[Power] empirical MDD, instrument capability (smallest true "
+              f"displacement with power >= 0.95): "
               f"{mdd_emp if mdd_emp is not None else '> max simulated'}"
               f"   (Currie approximation: 3.29 x u0 ~ 0.25)")
     return results, mdd_emp

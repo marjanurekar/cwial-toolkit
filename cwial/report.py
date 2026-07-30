@@ -36,7 +36,7 @@ Sources                    : {n_sources} independent source(s) on file
 --- 6. UNCERTAINTY BUDGET ---
 {budget}
 
---- 7. FITNESS-FOR-PURPOSE DETERMINATION ---
+--- 7. MEASUREMENT VERDICT AND CAPABILITY ---
 {fitness_statement}
 
 --- 8. TRACEABILITY STATEMENT ---
@@ -52,12 +52,27 @@ def generate_report(bdi_result, budget, vfrb_entry, measurand="BDI",
                      method="Survey-based Type A + documented Type B components.",
                      analyst="Unassigned", out_dir="reports"):
     n_sources = len(vfrb_entry.get("sources", []))
+    if bdi_result.distinguishable_from_zero:
+        verdict = (
+            "DISTINGUISHABLE FROM ZERO -- the measured displacement exceeds "
+            "its expanded uncertainty, so the reading is not attributable to "
+            "measurement noise at the stated coverage."
+        )
+    else:
+        verdict = (
+            "NOT DISTINGUISHABLE FROM ZERO -- the measured displacement does "
+            "not exceed its expanded uncertainty; it cannot be separated from "
+            "measurement noise at the stated coverage."
+        )
     fitness_statement = (
-        "PASS -- measured displacement exceeds expanded uncertainty; "
-        "response consideration is metrologically justified."
-        if bdi_result.passes_response_threshold else
-        "MONITOR -- measured displacement within measurement noise floor; "
-        "no response action metrologically justified at this time."
+        verdict + "\n" + bdi_result.capability_note() + "\n"
+        "  Note: distinguishability is not a decision to act. Whether a "
+        "displacement distinguishable from zero is also large enough to warrant "
+        "a response is a separate, policy-level judgement that the measurement "
+        "informs but does not make; and for a verified-false proposition the "
+        "capability quantities above are properties of the procedure at a null "
+        "that is not physically realisable (see method notes), reported for "
+        "scale rather than as thresholds this output has passed."
     )
 
     text = REPORT_TEMPLATE.format(
