@@ -1,0 +1,38 @@
+cff-version: 1.2.0
+message: "If you use this toolkit, please cite the archived release."
+type: software
+title: "CWIAL Starter Kit: an ISO/IEC 17025-aligned toolkit for cognitive warfare information metrology"
+abstract: >-
+  A minimal, dependency-free Python implementation of the Cognitive Warfare
+  Information Metrology Framework: a Verified Factual Reference Base, a GUM
+  Type A and Type B uncertainty budget engine, belief displacement and
+  cognitive attack velocity measurands, an instrument registry, an ISO/IEC
+  17025 clause 7.8 report generator, Monte Carlo recovery and detection
+  power studies, and metrological characterisation of an LLM or classifier
+  used as a narrative coherence scoring instrument.
+authors:
+  - family-names: "Urekar"
+    given-names: "Marjan"
+    orcid: "https://orcid.org/0000-0002-6089-9148"
+    affiliation: "Cognitive Warfare Information Analysis Laboratory No. 1 (Perialetheia)"
+version: "0.3.0"
+date-released: "2026-09-03"
+url: "https://perialetheia.org"
+license: MIT
+keywords:
+  - measurement uncertainty
+  - metrology
+  - GUM
+  - ISO/IEC 17025
+  - cognitive warfare
+  - disinformation
+  - belief displacement
+  - survey methodology
+  - information integrity
+references:
+  - type: data
+    title: "Verified Factual Reference Base and instrument registry of the Cognitive Warfare Information Analysis Laboratory No. 1"
+    doi: "10.5281/zenodo.22277183"
+    authors:
+      - family-names: "Urekar"
+        given-names: "Marjan"
