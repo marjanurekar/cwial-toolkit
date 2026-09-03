@@ -1,4 +1,5 @@
 # CWIAL Starter Kit
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22277183.svg)](https://doi.org/10.5281/zenodo.22277183)
 
 A minimal, ISO/IEC 17025-aligned toolkit for running a small Cognitive Warfare
 Information Analysis Laboratory (CWIAL), implementing the Cognitive Warfare
