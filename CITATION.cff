@@ -16,6 +16,7 @@ authors:
     orcid: "https://orcid.org/0000-0002-6089-9148"
     affiliation: "Cognitive Warfare Information Analysis Laboratory No. 1 (Perialetheia)"
 version: "0.3.0"
+doi: "10.5281/zenodo.22277183"
 date-released: "2026-09-03"
 url: "https://perialetheia.org"
 license: MIT
