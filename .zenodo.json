@@ -1,0 +1,40 @@
+{
+  "title": "CWIAL Starter Kit: an ISO/IEC 17025-aligned toolkit for cognitive warfare information metrology",
+  "upload_type": "software",
+  "description": "<p>A minimal, dependency-free Python implementation of the Cognitive Warfare Information Metrology Framework (CWIMF): a Verified Factual Reference Base, a GUM Type A and Type B uncertainty budget engine, belief displacement (BDI) and cognitive attack velocity (CAV) measurands, an instrument registry, an ISO/IEC 17025 clause 7.8 report generator, Monte Carlo recovery and detection power studies, and metrological characterisation of an LLM or classifier used as a narrative coherence scoring instrument.</p><p>The three example scripts run end to end with no external dependencies and verify internal consistency: that the estimators and the propagation are correct. They do not validate the reference base or the design effect assumption.</p>",
+  "creators": [
+    {
+      "name": "Urekar, Marjan",
+      "orcid": "0000-0002-6089-9148",
+      "affiliation": "Cognitive Warfare Information Analysis Laboratory No. 1 (Perialetheia)"
+    }
+  ],
+  "license": "mit",
+  "access_right": "open",
+  "version": "0.3.0",
+  "language": "eng",
+  "keywords": [
+    "measurement uncertainty",
+    "metrology",
+    "GUM",
+    "ISO/IEC 17025",
+    "cognitive warfare",
+    "disinformation",
+    "belief displacement",
+    "survey methodology",
+    "information integrity"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "10.5281/zenodo.22277183",
+      "relation": "references",
+      "resource_type": "dataset",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "https://perialetheia.org",
+      "relation": "isDocumentedBy",
+      "scheme": "url"
+    }
+  ]
+}
